@@ -277,7 +277,8 @@ with tab1:
             df_loc = pd.DataFrame(rows)
 
             def highlight(row):
-                color = color_map.get(row["Status"], "white")
+                status = df_loc.loc[row.name, "Status"]
+                color = color_map.get(status, "white")
                 return [f"background-color: {color}"] * len(row)
 
             st.markdown(f"**{loc}**")
