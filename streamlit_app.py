@@ -82,17 +82,47 @@ def compute_correlations(df, field='Temp_F'):
     pivot = df.pivot(index='Timestamp', columns='DeviceName', values=field)
     return pivot.corr(method='pearson')
 
+# Calculate dewpoint in Fahrenheit from temperature (°F) and RH (%)
+def dewpoint_f(temp_f, rh):
+    temp_c = (temp_f - 32) * 5.0 / 9.0
+    alpha = (17.27 * temp_c) / (237.7 + temp_c) + np.log(rh / 100.0)
+    dew_c = (237.7 * alpha) / (17.27 - alpha)
+    return dew_c * 9.0 / 5.0 + 32
+
 # --- Device groupings for KPI Summary ---
 main = [f"SM{i:02d}" for i in range(2, 4)]
 crawlspace = [f"SM{i:02d}" for i in range(4, 6)]
+attic = []  # placeholder for any future attic sensors
+
 location_map = {d: "Main" for d in main}
 location_map.update({d: "Crawlspace" for d in crawlspace})
+location_map.update({d: "Attic" for d in attic})
 
-# KPI band descriptions
-desc_avg_temp = "Quarterly average between 68°F and 75°F"
-desc_temp_swing = "Difference between max and min under 5°F"
-desc_avg_rh = "Comfort range 30–60% RH"
-desc_rh_var = "Standard deviation below 10%"
+# KPI targets by location
+KPI_TARGETS = {
+    "Main": {
+        "Average Temp (°F)": (68, 75),
+        "Temp Swing (°F)": 5,
+        "Average RH (%)": (30, 60),
+        "RH Variability (%)": 10,
+        "Average Dewpoint (°F)": (45, 60),
+    },
+    "Crawlspace": {
+        "Average Temp (°F)": (60, 70),
+        "Temp Swing (°F)": 7,
+        "Average RH (%)": (30, 65),
+        "RH Variability (%)": 15,
+        "Average Dewpoint (°F)": (40, 55),
+    },
+    "Attic": {
+        "Average Temp (°F)": (60, 80),
+        "Temp Swing (°F)": 10,
+        "Average RH (%)": (20, 60),
+        "RH Variability (%)": 15,
+        "Average Dewpoint (°F)": (30, 60),
+    },
+}
+
 
 # --- Streamlit App Configuration ---
 st.set_page_config(page_title='St Matthias: 2025 Environmental Data', layout='wide')
@@ -145,6 +175,7 @@ for dev, df in device_dfs.items():
     filled_r, _ = fill_and_flag(tmp['RH'])
     tmp['Temp_F'] = filled_t
     tmp['RH'] = filled_r
+    tmp['Dewpoint_F'] = dewpoint_f(tmp['Temp_F'], tmp['RH'])
     tmp['Interpolated'] = flag_t
     tmp['Device'] = dev
     tmp['DeviceName'] = DEVICE_LABELS.get(dev, dev)
@@ -202,32 +233,69 @@ with tab1:
         st.info("No data available for the selected date range.")
     else:
         indoor_df = df_all[df_all['Location'] != 'Outdoor']
-        # Status helper
-        def temp_status(val: float) -> str:
-            if 68 <= val <= 75:
-                return 'Pass'
-            if val < 68 - 2 or val > 75 + 2:
-                return 'Flag'
-            return 'Check'
 
-        rows = []
-        for location in sorted(indoor_df['Location'].unique()):
-            loc_df = indoor_df[indoor_df['Location'] == location]
+        def kpi_status(loc, kpi, val):
+            tgt = KPI_TARGETS.get(loc, {}).get(kpi)
+            if tgt is None:
+                return 'green'
+            if isinstance(tgt, tuple):
+                low, high = tgt
+                if val < low or val > high:
+                    if val < low - 2 or val > high + 2:
+                        return 'red'
+                    return 'yellow'
+                return 'green'
+            else:
+                if val <= tgt:
+                    return 'green'
+                if val <= tgt + 2:
+                    return 'yellow'
+                return 'red'
+
+        color_map = {'green': '#ccffcc', 'yellow': '#ffffcc', 'red': '#ffcccc'}
+
+        for loc in ["Crawlspace", "Main", "Attic"]:
+            loc_df = indoor_df[indoor_df['Location'] == loc]
+            if loc_df.empty:
+                continue
             avg_temp = loc_df['Temp_F'].mean()
             temp_swing = loc_df['Temp_F'].max() - loc_df['Temp_F'].min()
             avg_rh = loc_df['RH'].mean()
             rh_var = loc_df['RH'].std()
+            dew = loc_df['Dewpoint_F'].mean()
 
-            swing_status = 'Area for improvement' if temp_swing > 5 else 'Pass'
-            rh_status = 'Area for improvement' if rh_var > 10 else 'Pass'
+            rows = []
+            for kpi, val in [
+                ("Average Temp (°F)", avg_temp),
+                ("Temp Swing (°F)", temp_swing),
+                ("Average RH (%)", avg_rh),
+                ("RH Variability (%)", rh_var),
+                ("Average Dewpoint (°F)", dew),
+            ]:
+                rows.append({"KPI": kpi, "Value": f"{val:.2f}", "Status": kpi_status(loc, kpi, val)})
 
-            rows.extend([
-                {'Location': location, 'KPI': 'Average Temp (°F)', 'Value': f"{avg_temp:.2f}", 'Status': temp_status(avg_temp), 'Target': desc_avg_temp},
-                {'Location': location, 'KPI': 'Temp Swing (°F)', 'Value': f"{temp_swing:.2f}", 'Status': swing_status, 'Target': desc_temp_swing},
-                {'Location': location, 'KPI': 'Average RH (%)', 'Value': f"{avg_rh:.2f}", 'Status': 'n/a', 'Target': desc_avg_rh},
-                {'Location': location, 'KPI': 'RH Variability (%)', 'Value': f"{rh_var:.2f}", 'Status': rh_status, 'Target': desc_rh_var},
-            ])
-        st.table(pd.DataFrame(rows))
+            df_loc = pd.DataFrame(rows)
+
+            def highlight(row):
+                color = color_map.get(row["Status"], "white")
+                return [f"background-color: {color}"] * 2
+
+            st.markdown(f"**{loc}**")
+            styled = df_loc[["KPI", "Value"]].style.apply(highlight, axis=1)
+            st.dataframe(styled, hide_index=True, use_container_width=True)
+
+        # Targets reference table
+        target_rows = []
+        for loc, metrics in KPI_TARGETS.items():
+            for kpi, val in metrics.items():
+                if isinstance(val, tuple):
+                    val_str = f"{val[0]}–{val[1]}"
+                else:
+                    val_str = f"<= {val}"
+                target_rows.append({"Location": loc, "KPI": kpi, "Target": val_str})
+
+        st.subheader("KPI Targets")
+        st.table(pd.DataFrame(target_rows))
 
 with tab2:
     st.subheader("Data Plots and Statistics")
