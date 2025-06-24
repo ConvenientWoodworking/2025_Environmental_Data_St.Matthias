@@ -281,12 +281,11 @@ with tab1:
                 return [f"background-color: {color}"] * len(row)
 
             st.markdown(f"**{loc}**")
-            styled = (
-                df_loc.style.apply(highlight, axis=1)
-                .hide_index()
-                .hide_columns(["Status"])
-            )
-            st.dataframe(styled, use_container_width=True)
+            # Hide the index and Status column in a way that works across pandas versions
+            display_df = df_loc.drop(columns=["Status"])  # remove Status column
+            styled = display_df.style.apply(highlight, axis=1)
+            # st.dataframe supports hide_index argument from Streamlit >=1.22
+            st.dataframe(styled, hide_index=True, use_container_width=True)
 
         # Targets reference table
         target_rows = []
