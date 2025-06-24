@@ -91,6 +91,31 @@ KPI_COLOR_RANGES = {
     },
 }
 
+# KPI targets by location
+KPI_TARGETS = {
+    "Main": {
+        "Average Temp (°F)": (68, 75),
+        "Temp Swing (°F)": 5,
+        "Average RH (%)": (30, 60),
+        "RH Variability (%)": 10,
+        "Average Dewpoint (°F)": (45, 60),
+    },
+    "Crawlspace": {
+        "Average Temp (°F)": (60, 70),
+        "Temp Swing (°F)": 7,
+        "Average RH (%)": (30, 65),
+        "RH Variability (%)": 15,
+        "Average Dewpoint (°F)": (40, 55),
+    },
+    "Attic": {
+        "Average Temp (°F)": (60, 80),
+        "Temp Swing (°F)": 10,
+        "Average RH (%)": (20, 60),
+        "RH Variability (%)": 15,
+        "Average Dewpoint (°F)": (30, 60),
+    },
+}
+
 # --- Helper functions ---
 def load_and_clean_file(path):
     """Load a device export file (.csv or .xlsx) and clean column names."""
@@ -170,32 +195,6 @@ attic = []  # placeholder for any future attic sensors
 location_map = {d: "Main" for d in main}
 location_map.update({d: "Crawlspace" for d in crawlspace})
 location_map.update({d: "Attic" for d in attic})
-
-# KPI targets by location
-KPI_TARGETS = {
-    "Main": {
-        "Average Temp (°F)": (68, 75),
-        "Temp Swing (°F)": 5,
-        "Average RH (%)": (30, 60),
-        "RH Variability (%)": 10,
-        "Average Dewpoint (°F)": (45, 60),
-    },
-    "Crawlspace": {
-        "Average Temp (°F)": (60, 70),
-        "Temp Swing (°F)": 7,
-        "Average RH (%)": (30, 65),
-        "RH Variability (%)": 15,
-        "Average Dewpoint (°F)": (40, 55),
-    },
-    "Attic": {
-        "Average Temp (°F)": (60, 80),
-        "Temp Swing (°F)": 10,
-        "Average RH (%)": (20, 60),
-        "RH Variability (%)": 15,
-        "Average Dewpoint (°F)": (30, 60),
-    },
-}
-
 
 # --- Streamlit App Configuration ---
 st.set_page_config(page_title='St Matthias: 2025 Environmental Data', layout='wide')
