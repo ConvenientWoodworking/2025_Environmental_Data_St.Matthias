@@ -279,7 +279,7 @@ with tab1:
             def highlight(row):
                 status = df_loc.loc[row.name, "Status"]
                 color = color_map.get(status, "white")
-                return [f"background-color: {color}; color: black""] * len(row)
+                return [f"background-color: {color}; color: black"] * len(row)
 
             st.markdown(f"**{loc}**")
             # Hide the index and Status column in a way that works across pandas versions
