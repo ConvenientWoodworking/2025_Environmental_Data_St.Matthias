@@ -18,6 +18,79 @@ DEVICE_LABELS = {
     'SM05': "Sanctuary South-Crawlspace",
 }
 
+
+# Explicit color ranges for KPI status by location. Update these
+# ranges to control the numeric boundaries for green, yellow and red
+# indicators in the KPI summary table.
+KPI_COLOR_RANGES = {
+    "Main": {
+        "Average Temperature (°F)": {
+            "green": (68, 75),
+            "yellow": (66, 77),
+        },
+        "Temperature Swing (°F)": {
+            "green": (None, 5),
+            "yellow": (5, 7),
+        },
+        "Average Relative Humidity (%)": {
+            "green": (30, 60),
+            "yellow": (28, 62),
+        },
+        "Relative Humidity Variability (%)": {
+            "green": (None, 10),
+            "yellow": (10, 12),
+        },
+        "Average Dewpoint (°F)": {
+            "green": (45, 60),
+            "yellow": (43, 62),
+        },
+    },
+    "Crawlspace": {
+        "Average Temperature (°F)": {
+            "green": (60, 70),
+            "yellow": (58, 72),
+        },
+        "Temperature Swing (°F)": {
+            "green": (None, 7),
+            "yellow": (7, 9),
+        },
+        "Average Relative Humidity (%)": {
+            "green": (30, 65),
+            "yellow": (28, 67),
+        },
+        "Relative Humidity Variability (%)": {
+            "green": (None, 15),
+            "yellow": (15, 17),
+        },
+        "Average Dewpoint (°F)": {
+            "green": (40, 55),
+            "yellow": (38, 57),
+        },
+    },
+    "Attic": {
+        "Average Temperature (°F)": {
+            "green": (60, 80),
+            "yellow": (58, 82),
+        },
+        "Temperature Swing (°F)": {
+            "green": (None, 10),
+            "yellow": (10, 12),
+        },
+        "Average Relative Humidity (%)": {
+            "green": (20, 60),
+            "yellow": (18, 62),
+        },
+        "Relative Humidity Variability (%)": {
+            "green": (None, 15),
+            "yellow": (15, 17),
+        },
+        "Average Dewpoint (°F)": {
+            "green": (30, 60),
+            "yellow": (28, 62),
+        },
+    },
+}
+
 # --- Helper functions ---
 def load_and_clean_file(path):
     """Load a device export file (.csv or .xlsx) and clean column names."""
@@ -235,6 +308,24 @@ with tab1:
         indoor_df = df_all[df_all['Location'] != 'Outdoor']
 
         def kpi_status(loc, kpi, val):
+            ranges = KPI_COLOR_RANGES.get(loc, {}).get(kpi)
+            if ranges is not None:
+                g_low, g_high = ranges.get('green', (None, None))
+                y_low, y_high = ranges.get('yellow', (None, None))
+
+                def in_range(v, low, high):
+                    if low is not None and v < low:
+                        return False
+                    if high is not None and v > high:
+                        return False
+                    return True
+
+                if in_range(val, g_low, g_high):
+                    return 'green'
+                if in_range(val, y_low, y_high):
+                    return 'yellow'
+                return 'red'
+
             tgt = KPI_TARGETS.get(loc, {}).get(kpi)
             if tgt is None:
                 return 'green'
