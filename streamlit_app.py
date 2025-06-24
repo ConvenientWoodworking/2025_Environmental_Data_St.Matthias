@@ -278,11 +278,15 @@ with tab1:
 
             def highlight(row):
                 color = color_map.get(row["Status"], "white")
-                return [f"background-color: {color}"] * 2
+                return [f"background-color: {color}"] * len(row)
 
             st.markdown(f"**{loc}**")
-            styled = df_loc[["KPI", "Value"]].style.apply(highlight, axis=1)
-            st.dataframe(styled, hide_index=True, use_container_width=True)
+            styled = (
+                df_loc.style.apply(highlight, axis=1)
+                .hide_index()
+                .hide_columns(["Status"])
+            )
+            st.dataframe(styled, use_container_width=True)
 
         # Targets reference table
         target_rows = []
