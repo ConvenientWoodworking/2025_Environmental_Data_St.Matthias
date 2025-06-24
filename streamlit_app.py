@@ -25,8 +25,8 @@ DEVICE_LABELS = {
 KPI_COLOR_RANGES = {
     "Main": {
         "Average Temperature (°F)": {
-            "green": (68, 75),
-            "yellow": (60, 80),
+            "green": (65, 75),
+            "yellow": (55, 80),
         },
         "Temperature Swing (°F)": {
             "green": (None, 10),
