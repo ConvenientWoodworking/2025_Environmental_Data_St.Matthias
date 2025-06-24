@@ -91,30 +91,14 @@ KPI_COLOR_RANGES = {
     },
 }
 
-# KPI targets by location
-KPI_TARGETS = {
-    "Main": {
-        "Average Temp (°F)": (68, 75),
-        "Temp Swing (°F)": 5,
-        "Average RH (%)": (30, 60),
-        "RH Variability (%)": 10,
-        "Average Dewpoint (°F)": (45, 60),
-    },
-    "Crawlspace": {
-        "Average Temp (°F)": (60, 70),
-        "Temp Swing (°F)": 7,
-        "Average RH (%)": (30, 65),
-        "RH Variability (%)": 15,
-        "Average Dewpoint (°F)": (40, 55),
-    },
-    "Attic": {
-        "Average Temp (°F)": (60, 80),
-        "Temp Swing (°F)": 10,
-        "Average RH (%)": (20, 60),
-        "RH Variability (%)": 15,
-        "Average Dewpoint (°F)": (30, 60),
-    },
-}
+# KPI targets derived from the green ranges above
+def _build_kpi_targets(color_ranges):
+    targets = {}
+    for loc, metrics in color_ranges.items():
+        targets[loc] = {metric: vals.get("green") for metric, vals in metrics.items()}
+    return targets
+
+KPI_TARGETS = _build_kpi_targets(KPI_COLOR_RANGES)
 
 # --- Helper functions ---
 def load_and_clean_file(path):
@@ -383,7 +367,13 @@ with tab1:
         for loc, metrics in KPI_TARGETS.items():
             for kpi, val in metrics.items():
                 if isinstance(val, tuple):
-                    val_str = f"{val[0]}–{val[1]}"
+                    low, high = val
+                    if low is None:
+                        val_str = f"<= {high}"
+                    elif high is None:
+                        val_str = f">= {low}"
+                    else:
+                        val_str = f"{low}–{high}"
                 else:
                     val_str = f"<= {val}"
                 target_rows.append({"Location": loc, "KPI": kpi, "Target": val_str})
