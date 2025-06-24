@@ -266,10 +266,10 @@ with tab1:
 
             rows = []
             for kpi, val in [
-                ("Average Temp (°F)", avg_temp),
-                ("Temp Swing (°F)", temp_swing),
-                ("Average RH (%)", avg_rh),
-                ("RH Variability (%)", rh_var),
+                ("Average Temperature (°F)", avg_temp),
+                ("Temperature Swing (°F)", temp_swing),
+                ("Average Relative Humidity (%)", avg_rh),
+                ("Relative Humidity Variability (%)", rh_var),
                 ("Average Dewpoint (°F)", dew),
             ]:
                 rows.append({"KPI": kpi, "Value": f"{val:.2f}", "Status": kpi_status(loc, kpi, val)})
