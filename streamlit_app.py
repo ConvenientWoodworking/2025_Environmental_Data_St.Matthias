@@ -228,7 +228,7 @@ selected_devices = [d for d in devices if st.session_state.get(f'chk_{d}', False
 tab1, tab2 = st.tabs(["Data Analysis", "Data Display"])
 
 with tab1:
-    st.subheader("Quarterly KPI Summary")
+    st.subheader("KPI (Key Performance Indicators) Summary")
     if df_all.empty:
         st.info("No data available for the selected date range.")
     else:
@@ -279,7 +279,7 @@ with tab1:
             def highlight(row):
                 status = df_loc.loc[row.name, "Status"]
                 color = color_map.get(status, "white")
-                return [f"background-color: {color}"] * len(row)
+                return [f"background-color: {color}; color: black""] * len(row)
 
             st.markdown(f"**{loc}**")
             # Hide the index and Status column in a way that works across pandas versions
