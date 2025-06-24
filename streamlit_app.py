@@ -26,67 +26,67 @@ KPI_COLOR_RANGES = {
     "Main": {
         "Average Temperature (°F)": {
             "green": (68, 75),
-            "yellow": (66, 77),
+            "yellow": (60, 80),
         },
         "Temperature Swing (°F)": {
-            "green": (None, 5),
-            "yellow": (5, 7),
+            "green": (None, 10),
+            "yellow": (10, 15),
         },
         "Average Relative Humidity (%)": {
-            "green": (30, 60),
-            "yellow": (28, 62),
+            "green": (45, 55),
+            "yellow": (40, 60),
         },
         "Relative Humidity Variability (%)": {
             "green": (None, 10),
-            "yellow": (10, 12),
+            "yellow": (10, 20),
         },
         "Average Dewpoint (°F)": {
-            "green": (45, 60),
-            "yellow": (43, 62),
+            "green": (30, 50),
+            "yellow": (20, 60),
         },
     },
     "Crawlspace": {
         "Average Temperature (°F)": {
-            "green": (60, 70),
-            "yellow": (58, 72),
+            "green": (50, 70),
+            "yellow": (40, 80),
         },
         "Temperature Swing (°F)": {
-            "green": (None, 7),
-            "yellow": (7, 9),
+            "green": (None, 10),
+            "yellow": (10, 25),
         },
         "Average Relative Humidity (%)": {
-            "green": (30, 65),
-            "yellow": (28, 67),
+            "green": (40, 60),
+            "yellow": (30, 75),
         },
         "Relative Humidity Variability (%)": {
             "green": (None, 15),
-            "yellow": (15, 17),
+            "yellow": (15, 25),
         },
         "Average Dewpoint (°F)": {
-            "green": (40, 55),
-            "yellow": (38, 57),
+            "green": (30, 60),
+            "yellow": (25, 65),
         },
     },
     "Attic": {
         "Average Temperature (°F)": {
-            "green": (60, 80),
-            "yellow": (58, 82),
+            "green": (50, 90),
+            "yellow": (40, 100),
         },
         "Temperature Swing (°F)": {
-            "green": (None, 10),
-            "yellow": (10, 12),
+            "green": (None, 30),
+            "yellow": (30, 45),
         },
         "Average Relative Humidity (%)": {
-            "green": (20, 60),
-            "yellow": (18, 62),
+            "green": (30, 50),
+            "yellow": (30, 75),
         },
         "Relative Humidity Variability (%)": {
             "green": (None, 15),
-            "yellow": (15, 17),
+            "yellow": (15, 25),
         },
         "Average Dewpoint (°F)": {
             "green": (30, 60),
-            "yellow": (28, 62),
+            "yellow": (25, 65),
         },
     },
 }
