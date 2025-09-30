@@ -421,7 +421,7 @@ with tab2:
             pts_rh = alt.Chart(df_r[df_r['Interpolated']]).mark_circle(size=50, color='red').encode(
                 x='Timestamp:T', y='value:Q'
             )
-            st.altair_chart(line_rh + pts_rh, width='stretch')
+            st.altair_chart(line_rh + pts_rh, use_container_width=True)
 
             # Correlation matrices
             st.header('Correlation Matrix (Temperature)')
@@ -432,7 +432,7 @@ with tab2:
             heat_t = alt.Chart(df_ct).mark_rect().encode(
                 x='DeviceName2:O', y='DeviceName:O', color='Corr:Q'
             ).properties(width=400, height=400)
-            st.altair_chart(heat_t, width='content')
+            st.altair_chart(heat_t, use_container_width=False)
 
             st.header('Correlation Matrix (Relative Humidity)')
             corr_h = compute_correlations(df, field='RH')
@@ -442,7 +442,7 @@ with tab2:
             heat_h = alt.Chart(df_ch).mark_rect().encode(
                 x='DeviceName2:O', y='DeviceName:O', color='Corr:Q'
             ).properties(width=400, height=400)
-            st.altair_chart(heat_h, width='content')
+            st.altair_chart(heat_h, use_container_width=False)
 
             # Normalized Differences
             st.header('Normalized Temperature Difference')
@@ -458,7 +458,7 @@ with tab2:
                     y=alt.Y('Norm_T:Q', title='Temp Difference (°F)'),
                     color='DeviceName:N'
                 )
-                st.altair_chart(chart_norm_t, width='stretch')
+                st.altair_chart(chart_norm_t, use_container_width=True)
 
             st.header('Normalized Relative Humidity Difference')
             if 'AS10' not in selected_devices or 'AS10' not in df['Device'].unique():
@@ -470,7 +470,7 @@ with tab2:
                     y=alt.Y('Norm_RH:Q', title='RH Difference (%)'),
                     color='DeviceName:N'
                 )
-                st.altair_chart(chart_norm_rh, width='stretch')
+                st.altair_chart(chart_norm_rh, use_container_width=True)
 
             # Pearson Corr vs Outdoor Reference
             st.header('Pearson Corr vs Outdoor Reference (Temp)')
