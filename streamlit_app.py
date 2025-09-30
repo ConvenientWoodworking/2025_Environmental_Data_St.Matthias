@@ -177,12 +177,12 @@ def dewpoint_f(temp_f, rh):
 # automatically shown in the sidebar.
 main = [d for d, lbl in DEVICE_LABELS.items() if lbl.endswith("-Main")]
 crawlspace = [d for d, lbl in DEVICE_LABELS.items() if lbl.endswith("-Crawlspace")]
-attic = [d for d, lbl in DEVICE_LABELS.items() if lbl.endswith("-Attic")]
+# attic = [d for d, lbl in DEVICE_LABELS.items() if lbl.endswith("-Attic")]
 outdoor = [d for d, lbl in DEVICE_LABELS.items() if "Outdoor" in lbl]
 
 location_map = {d: "Main" for d in main}
 location_map.update({d: "Crawlspace" for d in crawlspace})
-location_map.update({d: "Attic" for d in attic})
+# location_map.update({d: "Attic" for d in attic})
 location_map.update({d: "Outdoor" for d in outdoor})
 
 # --- Streamlit App Configuration ---
@@ -280,7 +280,7 @@ def group_ui(group, label):
 # Apply groupings
 group_ui(main, 'Main')
 group_ui(crawlspace, 'Crawlspace')
-group_ui(attic, 'Attic')
+# group_ui(attic, 'Attic')
 group_ui(outdoor, 'Outdoor Reference')
 
 selected_devices = [d for d in devices if st.session_state.get(f'chk_{d}', False)]
