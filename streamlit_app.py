@@ -446,10 +446,10 @@ with tab2:
 
             # Normalized Differences
             st.header('Normalized Temperature Difference')
-            if 'AS10' not in selected_devices or 'AS10' not in df['Device'].unique():
+            if 'SM01' not in selected_devices or 'SM01' not in df['Device'].unique():
                 st.info('Outdoor reference data must be selected and available to display Normalized Plots')
             else:
-                df_out = df[df['Device']=='AS10'][['Timestamp','Temp_F','RH']].rename(columns={'Temp_F':'T_out','RH':'RH_out'})
+                df_out = df[df['Device']=='SM01'][['Timestamp','Temp_F','RH']].rename(columns={'Temp_F':'T_out','RH':'RH_out'})
                 df_norm = df.merge(df_out, on='Timestamp')
                 df_norm['DeviceName'] = df_norm['Device'].map(DEVICE_LABELS).fillna(df_norm['Device'])
                 df_norm['Norm_T'] = df_norm['Temp_F'] - df_norm['T_out']
@@ -461,7 +461,7 @@ with tab2:
                 st.altair_chart(chart_norm_t, use_container_width=True)
 
             st.header('Normalized Relative Humidity Difference')
-            if 'AS10' not in selected_devices or 'AS10' not in df['Device'].unique():
+            if 'SM01' not in selected_devices or 'SM01' not in df['Device'].unique():
                 st.info('Outdoor reference data must be selected and available to display Normalized Plots')
             else:
                 df_norm['Norm_RH'] = df_norm['RH'] - df_norm['RH_out']
@@ -474,14 +474,14 @@ with tab2:
 
             # Pearson Corr vs Outdoor Reference
             st.header('Pearson Corr vs Outdoor Reference (Temp)')
-            if 'AS10' not in selected_devices or 'AS10' not in df['Device'].unique():
+            if 'SM01' not in selected_devices or 'SM01' not in df['Device'].unique():
                 st.info('Outdoor reference data must be selected and available to display Pearson Correlation')
             else:
                 cvt = compute_correlations(df, field='Temp_F')['Outdoor Reference']
                 st.table(cvt.reset_index().rename(columns={'index':'DeviceName','Outdoor Reference':'Corr'}))
 
             st.header('Pearson Corr vs Outdoor Reference (RH)')
-            if 'AS10' not in selected_devices or 'AS10' not in df['Device'].unique():
+            if 'SM01' not in selected_devices or 'SM01' not in df['Device'].unique():
                 st.info('Outdoor reference data must be selected and available to display Pearson Correlation')
             else:
                 cvr = compute_correlations(df, field='RH')['Outdoor Reference']
