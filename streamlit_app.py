@@ -186,7 +186,7 @@ location_map.update({d: "Attic" for d in attic})
 location_map.update({d: "Outdoor" for d in outdoor})
 
 # --- Streamlit App Configuration ---
-st.set_page_config(page_title='All Souls Cathedral: 2025 Environmental Data', layout='wide')
+st.set_page_config(page_title='St. Matthias Church: 2025 Environmental Data', layout='wide')
 # Display logo
 script_dir = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(script_dir, "Logo.png")
@@ -366,7 +366,7 @@ with tab1:
             display_df = df_loc.drop(columns=["Status"])  # remove Status column
             styled = display_df.style.apply(highlight, axis=1)
             # st.dataframe supports hide_index argument from Streamlit >=1.22
-            st.dataframe(styled, hide_index=True, use_container_width=True)
+            st.dataframe(styled, hide_index=True, width='stretch')
 
         # Targets reference table
         target_rows = []
@@ -408,7 +408,7 @@ with tab2:
             pts_temp = alt.Chart(df_t[df_t['Interpolated']]).mark_circle(size=50, color='red').encode(
                 x='Timestamp:T', y='value:Q'
             )
-            st.altair_chart(line_temp + pts_temp, use_container_width=True)
+            st.altair_chart(line_temp + pts_temp, width='stretch')
 
             # Relative Humidity plot
             st.header('Relative Humidity Data')
@@ -421,7 +421,7 @@ with tab2:
             pts_rh = alt.Chart(df_r[df_r['Interpolated']]).mark_circle(size=50, color='red').encode(
                 x='Timestamp:T', y='value:Q'
             )
-            st.altair_chart(line_rh + pts_rh, use_container_width=True)
+            st.altair_chart(line_rh + pts_rh, width='stretch')
 
             # Correlation matrices
             st.header('Correlation Matrix (Temperature)')
@@ -432,7 +432,7 @@ with tab2:
             heat_t = alt.Chart(df_ct).mark_rect().encode(
                 x='DeviceName2:O', y='DeviceName:O', color='Corr:Q'
             ).properties(width=400, height=400)
-            st.altair_chart(heat_t, use_container_width=False)
+            st.altair_chart(heat_t, width='content')
 
             st.header('Correlation Matrix (Relative Humidity)')
             corr_h = compute_correlations(df, field='RH')
@@ -442,7 +442,7 @@ with tab2:
             heat_h = alt.Chart(df_ch).mark_rect().encode(
                 x='DeviceName2:O', y='DeviceName:O', color='Corr:Q'
             ).properties(width=400, height=400)
-            st.altair_chart(heat_h, use_container_width=False)
+            st.altair_chart(heat_h, width='content')
 
             # Normalized Differences
             st.header('Normalized Temperature Difference')
@@ -458,7 +458,7 @@ with tab2:
                     y=alt.Y('Norm_T:Q', title='Temp Difference (°F)'),
                     color='DeviceName:N'
                 )
-                st.altair_chart(chart_norm_t, use_container_width=True)
+                st.altair_chart(chart_norm_t, width='stretch')
 
             st.header('Normalized Relative Humidity Difference')
             if 'AS10' not in selected_devices or 'AS10' not in df['Device'].unique():
@@ -470,7 +470,7 @@ with tab2:
                     y=alt.Y('Norm_RH:Q', title='RH Difference (%)'),
                     color='DeviceName:N'
                 )
-                st.altair_chart(chart_norm_rh, use_container_width=True)
+                st.altair_chart(chart_norm_rh, width='stretch')
 
             # Pearson Corr vs Outdoor Reference
             st.header('Pearson Corr vs Outdoor Reference (Temp)')
