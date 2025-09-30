@@ -16,6 +16,7 @@ DEVICE_LABELS = {
     'SM03': "Chapel-Main",
     'SM04': "Sanctuary North-Crawlspace",
     'SM05': "Sanctuary South-Crawlspace",
+    'SM06': "Chapel-Crawlspace",
 }
 
 
