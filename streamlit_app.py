@@ -408,7 +408,7 @@ with tab2:
             pts_temp = alt.Chart(df_t[df_t['Interpolated']]).mark_circle(size=50, color='red').encode(
                 x='Timestamp:T', y='value:Q'
             )
-            st.altair_chart(line_temp + pts_temp, width='stretch')
+            st.altair_chart(line_temp + pts_temp, use_container_width=True)
 
             # Relative Humidity plot
             st.header('Relative Humidity Data')
